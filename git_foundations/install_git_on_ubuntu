@@ -1,0 +1,15 @@
+1. Check the packages:
+$ dpkg -l | grep git
+
+# The ii in the list means (if there are packages installed, you should see this mark) that the package is correctly installed and available.
+
+Other commands:
+$ apt list git -a
+$ apt-cache pkgnames git
+
+2. Install git package:
+$ apt install -y git
+
+3. Check git version:
+git --version
+
