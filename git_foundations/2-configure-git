@@ -1,0 +1,42 @@
+1. Must have:
+$ git config --global --list
+
+'--system' - table relevant for the whole machine
+'--global' - for the current user
+'--local' (default) for the current repository
+
+$ git config --global user.name "John Doe"
+$ git config --global user.email johndoe@myemail.com
+$ git config --global core.editor vim
+$ git config --list 	# all settings are printed
+$ git config --list --global 	# only --global table is listed
+$ git config user.name	# selected record is printed
+
+2. .git diretory structure:
+# This directory is created during 'git init' operation. 
+
+- 'hooks' directory contains all custom hooks. These are small (usually) scripts which have to be executed before commit, or after, before push, etc.
+- 'branches' - deprecated.
+- 'HEAD' - pointer to the current branch and its latest commit.
+- 'config' - configuration file for the repository.
+- 'info' - the place where you stage the files using 'git add'.
+- 'refs' - the current state of the whole repo.
+- 'objects' - commits, trees and blobs are stored here.
+- 'logs' - self explanatory.
+- 'description' - description of the repository.
+
+3. Nice examples:
+$ git config --global color.status auto
+$ git config --global color.branch auto
+$ git config --global color.interactive auto
+$ git config --global color.diff auto
+$ git config --global alias.adog "log --all --decorate --oneline --graph"
+
+We can see the changes via:
+$ git config --list
+
+$ git add .
+$ git commit testfile-01 -m "create testfile-01"
+$ git adog
+
+
