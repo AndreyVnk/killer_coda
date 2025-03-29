@@ -19,7 +19,7 @@ $ git commit newfile -m "my first commit"	# we can use '-a' to commit all files 
 $ git status
 
 5. Add and commit multiple files in one shot:
-$ git add .	# only from current dir and subdirs (not from repository root)
+$ git add .	# only from current dir and subdirs recursively (not from repository root)
 $ git status
 $ git commit -m "my second commit" 
  
