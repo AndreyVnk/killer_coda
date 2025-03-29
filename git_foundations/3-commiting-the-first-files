@@ -1,0 +1,26 @@
+1. Local init of the repository:
+
+# Create a dir
+$ mkdir test && cd test
+$ git init
+$ git status
+$ ls -la
+
+2. Check status of repository:
+$ touch newfile && echo hello > newfile
+$ git status	# new files should be untracked
+
+3. Add files:
+$ git add newfile
+$ git status	# fiel is tracked and ready to be commited
+
+4. Commit files:
+$ git commit newfile -m "my first commit"	# we can use '-a' to commit all files of '.' to do it recursively
+$ git status
+
+5. Add and commit multiple files in one shot:
+$ git add .	# only from current dir and subdirs (not from repository root)
+$ git status
+$ git commit -m "my second commit" 
+ 
+
