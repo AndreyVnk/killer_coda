@@ -1,0 +1,24 @@
+1. Remove files from stage:
+$ git rm --cached testfile-01 	# remove a file from stage 
+$ git status
+
+$ git rm --cached -r .	# remove all files recursively
+
+2. Restore previous state:
+$ git checkout testfile-01	# reset the file to the state from previous commit
+$ git checkout .	# remove all changes in one command
+
+3. Another way of going back. Reset the current HEAD to the selected state:
+# 'git reset' moves the current pointer in 'HEAD' and 'branch refs' to specific state. 'git checkout' does similar thing, but in fact, both of these commands operates on different levels.
+
+# Reset has three main ways of operating, but we touch only 2 (not '--mixed')
+
+- '--soft':
+# Let't reset the HEAD to the state before commiting the last file.
+$ git reset --soft HEAD~1 
+
+# With '--soft' parameter we came back to the previous HEAD of the repository, but all changes which we commited are unchanged.
+
+- '--hard':
+$ git reset --hard HEAD~2	# came back two more commits (~HEAD~2) and we said, this time we want to not only move back, but also we want to remove all changes which were done.
+
