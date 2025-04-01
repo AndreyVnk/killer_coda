@@ -1,0 +1,9 @@
+1. Use editor to commit files:
+$ git commit testfile-01	# without "-m"
+
+Check default editor:
+$ git config --global --list | grep editor
+
+Configure vi editor:
+$ git config --global core.editor vi 
+
