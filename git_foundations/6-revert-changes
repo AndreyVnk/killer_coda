@@ -1,0 +1,11 @@
+# Imagine, that you did 'git reset'. all works for you, correct? But this means, you move HEAD of your local repo somewhere.
+# The best way, best practice to revert, or more "revert" changes is to create new commit from previous one. To avoid situation that HEAD will moved somewhere where it shouldn't be.
+
+1. Git revert:
+$ git revert --no-edit HEAD	# By using '--no-edit' we informed git that we don't want to pass any message and we ask to use default.
+
+$ git revert --edit HEAD~3	# revert multiple commits and with 'HEAD~3' we said: I want to move back from HEAD by 3 commits . But that's not all. This place becomes our new HEAD .
+
+# Important Very often you can experience problems when revert more than one commit and the same file is involed.
+
+
