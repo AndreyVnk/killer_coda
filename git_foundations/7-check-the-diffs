@@ -1,0 +1,18 @@
+1. Check the changes:
+$ git diff	# this command checks HEAD by default and shows differences between commit and working directory
+
+$ git diff HEAD~1	# modified HEAD command
+
+$ git diff HEAD~1 testfile-01	# check diff for one file
+
+2. Staged differences:
+$ touch testfile-03 && echo "testfile-03" > testfile-03 && git add testfile-03	# created a new file and added it to staging
+
+$ git diff 	# there is nothing about our new file
+
+$ git diff --staged	# to see the difference between staged work and HEAD
+
+3. Git show:
+$ git show	# give you information similar to 'git log'
+
+# 'git show' work by default against 'HEAD'
