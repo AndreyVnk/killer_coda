@@ -1,0 +1,63 @@
+1. Formatting information from git log:
+$ git log --oneline	# '--oneline' shows only most important info about commits
+
+$ git log -p		# equals 'git show' but for all commits
+
+$ git log --stat	# gives some statistics
+
+$ git shortlog 		# the information sorted by author of the commits 
+
+2. Prettier output?:
+$ git log --graph	# visualize work with branches
+
+$ git log --oneline --graph
+
+3. Formatting:
+$ git log --graph --pretty="%C(yellow) Hash: %h %C(blue)Date: %ad %C(red) Message: %s " --date=human
+
+# A few examples which we combine into a working command:
+'%Cblue' - switch output text to blue
+'%Creset' - resets the color to default
+'%H' - commit hash. Preferable is to use short hash with %h.
+'%an' - who commited the changes
+'%ad' - date of commit. For scripting purposes you can use UNIX timestamp - '%at'.
+'%s' - commit message
+
+$ git log --graph --pretty="%C(bold blue)%h %Cred%s %C(Yellow)by %an"
+
+$ git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit
+
+4. Git config and aliases:
+
+# We need to add alias to the git config file
+$ git config --global alias.lg 'log --color --graph --pretty="%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit' 	# instruct git that we want to change configuration (config), on global table (--global) and we configure alias called lg (alias.lg). The alias itself is inside the '' section
+
+$ git lg
+
+5. Querying:
+$ git log --author="John Doe" 	# will show all commits done by specific author
+
+$ git log --author="John Doe\|Joe Smith" 	# with this regex we asked for all commits authored by these two people
+
+# It is a good practice to have standards of creating messages for commits: 'JIRA-1234 my commit message'.
+$ git log --grep="JIRA-1234"
+
+$ git log -- testfile-02 branchfile-01		# please notice the '--'. This way we inform git that we have files, not branches in mind
+
+$ git log second-branch..master 		# compare two branches
+
+$ git log --merges				# to look for "merge" messages
+
+$ git log --no-merges				# to exclude merge commits
+
+# Search using dates:
+$ git log --after=2021-4-21
+$ git log --before 2021-4-30 --after=2021-4-1
+$ git log --after=yesterday
+
+# Limit numbers of returned commits
+$ git log -1
+$ git log -3
+
+
+$ git log -5 --grep="commit" --oneline 		# an example of mixed one
