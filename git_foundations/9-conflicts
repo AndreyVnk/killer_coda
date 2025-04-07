@@ -1,0 +1,17 @@
+1. Resolve conflict:
+'<<<<<<' - this is what we have in current branch
+
+'======' = center of our conflict
+
+'>>>>>>' - this wants to be merged / added. In our case this part is empty (as it should be).
+
+# Normally you should use 'vim', and remove lines.
+
+# The last thing to do is to add and commit the file again.
+
+# There are tools which can help you to resolve conflicts. Examples are:
+
+- git-mergetool (part of the git package, you need to specify proper tool which will be invoked)
+- Plugins to your beloved editor
+- Kdiff3
+- Meld
