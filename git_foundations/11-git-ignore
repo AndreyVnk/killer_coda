@@ -1,0 +1,29 @@
+# What kind of files it can be:
+- artifacts
+- tarballs
+- temp files
+- binaries
+- additional libraries (needed for compilation, for example)
+- other
+
+1. gitignore:
+$ touch .gitignore
+$ echo neveringit >> .gitignore		# ignore file
+$ echo seconddirectory >> .gitignore	# ignore dir
+
+2. More fancy tricks:
+
+$ touch firstdirectory/neveringit	# new file
+$ echo "this file has to go to git!" >> firstdirectory/neveringit
+
+$ git add . 
+
+# but what we need, really is:
+**/neveringit
+!firstdirectory/neveringit
+
+$ sed -i 's/neveringit/**\/neveringit/g' .gitignore
+$ echo '!firstdirectory/neveringit' >> .gitignore
+
+$ mkdir thirddirectory && echo "gotogit" > thirddirectory/togit && echo "not for git!" > thirddirectory/neveringit
+
