@@ -1,0 +1,27 @@
+1. Create tag:
+$ git tag -a v1.0 -m "version 1.0. initial state"
+
+2. Check the tags:
+$ git tag	# list of tags
+
+$ git show v1.0
+
+3. More tags and navigation:
+$ git tag -a v2.0 -m "version 2.0. A lot of new features"	# add one more tag after few commits
+
+4. Tag by commit:
+$ commit2tag=$(git adog | grep 'testfile-06' | awk '{print $2}' | head -n1)	# get commit number
+
+$ git tag -a v1.5 -m "version 1.5. Some updates" $commit2tag			# tag the commit
+
+5. Navigate through tags:
+$ git checkout v1.0	# jump to first tag
+
+$ git describe		# on what tag you are currently on
+
+# If there is no tag created yet, git will throw an error.
+
+$ git checkout $commitbetweentags	# you also can jump with commit number
+
+6. Delete tag:
+$ git tag -d v1.0
