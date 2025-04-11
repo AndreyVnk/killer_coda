@@ -1,0 +1,34 @@
+1. Create branch:
+$ git branch	# check what branches we have and also on which branch we currently are
+
+$ git checkout -b newbranch	# create and swith to just created branch
+
+# Do some commits
+
+$ git checkout master
+$ git merge newbranch --no-edit
+
+$ git branch -d newbranch && git branch		# delete branch
+
+2. Conflicts:
+# During the work on two branches it is possible that the changes will be implemented to the same file.
+
+$ sed -i '8d' testfile-02 && sed -i '5d' testfile-02 && sed -i '3d' testfile-02 && cat testfile-02
+
+$ git add testfile-02
+$ git commit -a -m "confirm merge"
+
+3. Better approach:
+# If you work on huge amount of changes, the good practice is to merge the master to your branch before merge to master.
+
+$ git branch
+$ git merge master --no-edit
+
+$ sed -i '8d' testfile-02 && sed -i '6d' testfile-02 && sed -i '3d' testfile-02 && cat testfile-02	# avoid the conflicts
+
+$ git status
+$ git add testfile-02
+$ git commit -a -m "merge master to newbranch"
+$ git checkout master
+$ git merge newbranch --no-edit
+
