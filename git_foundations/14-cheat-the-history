@@ -1,0 +1,22 @@
+1. Merge vs rebase:
+# We already knows what merge do. It is quite simple. We create branch, do changes here and there and then merge.
+
+2. Rebase:
+# We are using rebase to make history more clean, clear and ordered. This clearly means, we play with history of commits. Not in the very aggresive way, but still, history is kind of corrupted. This is huge risk when a huge team is working on the same repository.
+
+# Also rebase may lead to many conflicts. 
+
+$ git checkout second-branch
+$ git rebase master
+
+# Right now we can see two things:
+- history looks totally different. Is 'flat' now and shuffled.
+- HEAD of master is in the wrong position.
+
+# If we leave it that way, believe, we generate a chaos, mess, and comments of hatred ;P So, let's switch to master and then move the marker by merge the branch to master.
+
+$ git checkout master
+$ git merge second-branch
+
+# Now we have HEAD in proper place and the history which, in fact, does not represent the past work order, but is more readable.
+
