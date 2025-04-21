@@ -5,3 +5,11 @@ chmod 700 get_helm.sh /
 ./get_helm.sh
 
 # Docs: https://helm.sh/docs/intro/install/
+
+2. Helm Installation Check:
+$ helm verison
+
+$ helm repo add mock-app-repo https://benmalekarim.github.io/helm-scenarios-charts/
+$ helm install mock-app mock-app-repo/mock-app --version 2.1.0
+
+$ kubectl get all	# verify the deployed resources
