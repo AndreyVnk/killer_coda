@@ -1,0 +1,23 @@
+1. Scenario Exploration:
+
+$ helm list -n dev-ns	# check the deployed release
+
+$ export CHART_VERSION=$(helm list -n dev-ns -oyaml | yq -e '.[0].chart | split("-") | .[-1]' -)
+$ echo "Deployed Chart Version is: $CHART_VERSION"
+
+$ kubectl get all -n dev-ns	# verify the deployed resources
+
+# Verify the content of deployed container
+$ export PORT=5000
+$ export SERVICE_IP=$(kubectl get svc -n dev-ns -l app=mock-app -o jsonpath='{.items[0].spec.clusterIP}')
+$ curl -s http://${SERVICE_IP}:${PORT} -w "\n"
+
+$ helm repo list	# check helm repositories added to the scenario
+$ helm search repo mock-app-repo	# search helm charts of the helm repository
+
+$ export LATEST_CHART_VERSION=$(helm search repo mock-app-repo -oyaml | yq -e '.[0].version' -)
+$ echo "Latest mock-app chart version is: $LATEST_CHART_VERSION"
+
+2. Helm Release Upgrade:
+$ helm upgrade --namespace dev-ns mock-app mock-app-repo/mock-app
+
