@@ -1,0 +1,14 @@
+1. Scenario Exploration:
+$ helm list -n dev-ns
+$ kubectl get all -n dev-ns
+
+$ export PORT=5000
+$ export SERVICE_IP=$(kubectl get svc -n dev-ns -l app=mock-app -o jsonpath='{.items[0].spec.clusterIP}')
+$ curl -s http://${SERVICE_IP}:${PORT} -w "\n"
+
+2. Release Rollback to Previous Version:
+$ helm history mock-app -n dev-ns
+$ helm rollback -n dev-ns mock-app	# rollback to previous version
+
+$ curl -s http://${SERVICE_IP}:${PORT} -w "\n"	# verify the content of the deployed container
+
