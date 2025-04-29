@@ -1,0 +1,6 @@
+1. Application Release Uninstall:
+
+$ helm uninstall mock-app -n dev-ns
+
+$ helm list -n dev-ns		# check the deployed release
+$ kubectl get all -n dev-ns 	# verify the deployed resources 
