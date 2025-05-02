@@ -1,0 +1,9 @@
+1. Override helm values using inline values:
+
+$ helm get values --all mock-app -n dev-ns	# print values
+
+$ helm -n dev-ns upgrade --install mock-app /charts/mock-app-1.0.0.tgz --set message="You are overriding the message using an inline value. Good job !"
+
+2. Override helm values using values file:
+$ helm -n dev-ns upgrade --install mock-app /charts/mock-app-1.0.0.tgz  --values /charts/values.yaml
+
