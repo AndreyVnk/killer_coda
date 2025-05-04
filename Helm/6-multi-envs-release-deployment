@@ -1,0 +1,9 @@
+1. Add If condition to HPA template:
+# Deploy a mock-app-prod release in prod-ns namespace and a mock-app-dev release in dev-ns to check the solution.
+
+$ helm -n prod-ns upgrade --install mock-app-prod /charts/mock-app/. --set environment=prod
+$ helm -n dev-ns upgrade --install mock-app-dev /charts/mock-app/. --set environment=dev
+
+2. Review multi-environment deployment:
+$ kubectl get hpa -n dev-ns
+$ kubectl get hpa -n prod-ns	# condition works here
