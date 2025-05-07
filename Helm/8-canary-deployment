@@ -1,0 +1,11 @@
+1. What is canary deployment?
+# Canary deployment is a progressive deployment strategy that allows for the gradual release of a new version of an application to a subset of users before rolling it out to the entire production environment. This approach minimizes the risk associated with introducing new software versions by first exposing a small percentage of users to the changes. If the new version performs well and meets the necessary criteria, it is gradually scaled up to more users until it fully replaces the old version. Key benefits of canary deployment include reduced risk of widespread issues, the ability to monitor and validate new features in real-time, and the opportunity to roll back quickly if problems are detected.
+
+# Note that Helm is not the best tool for managing canary deployments. Tools like Istio or Argo Rollouts are more suitable for this use case.
+
+2. Enabling Canary Deployment for Our New Version:
+$ helm upgrade --install --namespace prod-ns mock-app mock-app-repo/mock-app-canary --set canary.enabled=true --set image.canaryTag=v1.1.0 	# enable canary deployment
+
+3. Validating Our Successfully Tested Canary Deployment:
+$ helm upgrade --install --namespace prod-ns mock-app mock-app-repo/mock-app-canary --set canary.enabled=false --set image.tag=v1.1.0	# upgrade application release
+
