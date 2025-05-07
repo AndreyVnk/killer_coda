@@ -1,0 +1,8 @@
+1. What is blue green deployment?
+# Blue-green deployment is a deployment strategy that involves maintaining two identical production environments, termed "blue" and "green." At any given time, only one of these environments serves live production traffic, while the other remains idle. When a new version of the application needs to be deployed, it is first deployed to the inactive environment (e.g., green). Once the new version is successfully deployed and tested, traffic is switched from the active environment (e.g., blue) to the updated environment (e.g., green). This approach ensures minimal downtime, as well as the ability to roll back quickly to the previous version in case of any issues. Blue-green deployment provides a reliable and efficient method for updating applications while maintaining high availability and reducing the risk of downtime or errors affecting end-users.
+
+# Note that Helm is not the best tool for managing blue green deployments. Tools like Istio or Linkerd are more suitable for this use case.
+
+2. Go Live Green Deployment:
+$ helm upgrade --install --namespace prod-ns mock-app mock-app-repo/mock-app-blue-green --set blue_green=green
+
