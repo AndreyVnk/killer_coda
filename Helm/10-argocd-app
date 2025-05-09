@@ -1,0 +1,24 @@
+---
+# Source: global-argocd-app/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mock-app
+  namespace: argocd
+spec:
+  destination:
+    server: "https://kubernetes.default.svc" 
+    namespace: prod-ns
+  project: default
+  source:
+    repoURL: 'https://github.com/BENMALEKarim/killercoda-helm-mock-app' ## TO BE MODIFIED
+    path: 'mock-app'
+    targetRevision: main
+    helm:
+      releaseName: mock-app
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

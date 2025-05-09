@@ -1,0 +1,52 @@
+1. What is GitOps?
+# GitOps, a paradigm where infrastructure and application configurations are stored in Git repositories, enables continuous delivery through version-controlled declarative management. Using ArgoCD, a powerful GitOps tool for Kubernetes, in conjunction with Helm, a Kubernetes package manager, streamlines this process by automating the deployment and synchronization of Helm charts. This integration ensures that the live state of applications always matches the desired state defined in Git, enhancing consistency, reliability, and auditability while minimizing manual intervention. By monitoring Git repositories for changes, ArgoCD automatically applies updates, providing a robust and efficient continuous delivery pipeline for Kubernetes environments.
+
+2. Deploy your Helm using ArgoCD:
+2.1 # Link to the repository: https://github.com/BENMALEKarim/killercoda-helm-mock-app	# fork this repo
+
+2.2 # Please update the ArgoCD application file to ensure the correct source repository URL is specified.
+# The file is located in /argocd/application.yaml. The filed to update is: spec.source.repoURL .
+
+$ kubectl apply -f /argocd/application.yaml		# deploy ArgoCD app
+$ kubectl get application -n argocd mock-app -w 	# check the status (Synced and Healthy)
+
+3. Manual Backend Modification:
+$ kubectl get cm -n prod-ns mock-app-configmap -oyaml	# verify configmap data
+$ kubectl edit cm -n prod-ns mock-app-configmap		# adding '!!!!!' at the end of the value
+
+# We still observe the same value as before the edit. It appears that our developers cannot directly modify the configuration from the backend. This approach aids in easier tracking of all changes from Git.
+
+4. Update Helm Chart Repository:
+# These modifications are reflected in the values defined within our Helm chart. The steps to enact these changes involve updating the values.yaml file located in mock-app/values.yaml within your Git repository (you can change message and version).
+
+# Once updated, execute git add, commit, and then push the changes back to the main branch and wait for ArgoCD application Synchronisation.
+
+$ curl -s http://${SERVICE_IP}:${PORT} -w "\n"		# verify the content of the deployment
+
+5. Summary:
+GitOps Workflow: Helm chart deployment with ArgoCD follows the GitOps paradigm, where Kubernetes application configurations are stored in Git repositories, serving as a single source of truth.
+
+$ curl -s http://${SERVICE_IP}:${PORT} -w "\n"		# verify the content of the deployment
+
+5. Summary:
+# 1. GitOps Workflow: Helm chart deployment with ArgoCD follows the GitOps paradigm, where Kubernetes application configurations are stored in Git repositories, serving as a single source of truth.
+
+# 2. Helm Charts: Helm is used as the package manager to define, install, and upgrade complex Kubernetes applications. Helm charts, collections of Kubernetes manifests, encapsulate application resources and configurations.
+
+# 3. ArgoCD Configuration: ArgoCD is configured to monitor a Git repository containing Helm charts. It continuously compares the desired state described in the Helm charts with the actual state of the Kubernetes cluster.
+
+# 4. Automated Synchronization: ArgoCD automatically synchronizes the live state of the applications in the cluster with the desired state specified in the Helm charts. It detects changes in the Git repository and applies them to the cluster.
+
+# 5. Declarative Management: With Helm and ArgoCD, deployment is managed declaratively. Desired application states are defined in the Helm charts stored in Git, and ArgoCD ensures that the cluster matches these states.
+
+# 6. Enhanced Reliability and Consistency: By leveraging Helm and ArgoCD, organizations achieve enhanced reliability and consistency in application deployments. Changes are tracked in version-controlled Git repositories, and automated processes ensure that deployments are accurate and consistent.
+
+Helm Charts: Helm is used as the package manager to define, install, and upgrade complex Kubernetes applications. Helm charts, collections of Kubernetes manifests, encapsulate application resources and configurations.
+
+ArgoCD Configuration: ArgoCD is configured to monitor a Git repository containing Helm charts. It continuously compares the desired state described in the Helm charts with the actual state of the Kubernetes cluster.
+
+Automated Synchronization: ArgoCD automatically synchronizes the live state of the applications in the cluster with the desired state specified in the Helm charts. It detects changes in the Git repository and applies them to the cluster.
+
+Declarative Management: With Helm and ArgoCD, deployment is managed declaratively. Desired application states are defined in the Helm charts stored in Git, and ArgoCD ensures that the cluster matches these states.
+
+Enhanced Reliability and Consistency: By leveraging Helm and ArgoCD, organizations achieve enhanced reliability and consistency in application deployments. Changes are tracked in version-controlled Git repositories, and automated processes ensure that deployments are accurate and consistent.
