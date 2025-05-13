@@ -1,0 +1,9 @@
+1. Find all Helm releases in the cluster:
+$ helm ls -A > /root/releases
+
+2. Delete a Helm release:
+$ helm -n team-yellow uninstall apiserver
+
+3. Install Helm Chart:
+$ helm -n team-yellow install devserver nginx-stable/nginx-ingress --set controller.debug.enable=false
+ 
