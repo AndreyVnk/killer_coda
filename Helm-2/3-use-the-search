@@ -1,0 +1,6 @@
+1. Search:
+$ helm search repo nginx-ingress-controller --version v9.9 -l
+
+2. Search and install:
+$ helm search repo bitnami/apach --version v10.0 -l
+$ helm install apache bitnami/apache --version 10.0.5 
