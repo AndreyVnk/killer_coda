@@ -1,0 +1,5 @@
+1. Inspect a chart:
+$ helm show values bitnami/wordpress
+
+2. Download a chart:
+$ helm pull bitnami/wordpress
