@@ -1,0 +1,10 @@
+1. Helm history:
+$ helm history webserver
+
+2. Helm get:
+$ helm get values webserver --revision 2
+
+3. Helm rollback:
+$ helm rollback webserver 2
+
+
