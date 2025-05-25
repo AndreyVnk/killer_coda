@@ -1,0 +1,24 @@
+1. Update Configmap Values: 
+$ helm -n dev-ns upgrade mock-app /charts/mock-app-1.0.0.tgz --set message="You are overriding the message using an inline value. Good job!"
+
+2. Explore Post Update Configmap:
+$ kubectl get cm -n dev-ns -l app=mock-app -ojsonpath='{.items[0].data}' && printf "\n"
+$ export PORT=5000 && export SERVICE_IP=$(kubectl get svc -n dev-ns -l app=mock-app -o jsonpath='{.items[0].spec.clusterIP}') && curl -s http://${SERVICE_IP}:${PORT} -w "\n"
+
+# When a Helm chart is upgraded and the ConfigMap it relies on is updated, the pod's environment variables, set during pod creation, remain unchanged. This means the pod doesn't automatically recognize the new ConfigMap data. To apply the changes, a manual pod restart or redeployment is required.
+
+3. Manual Rollout Restart:
+$ kubectl rollout restart deployment -n dev-ns -l app=mock-app
+
+4. Automatic Rollout:
+# Checksum Annotation: When Helm installs or updates a chart, it calculates a checksum for the ConfigMap or Secret used in the Deployment. This checksum is stored as an annotation in the Deployment resource.
+
+# Automatic Rollout: When a change is made to the ConfigMap or Secret, Helm updates the resource and changes the checksum annotation in the Deployment resource. Kubernetes detects this change and triggers a rolling update of the Deployment to ensure that pods are updated with the new configuration.
+
+# Update the deployment template with 9-deployment
+
+5. Verification Automatic Rollout:
+$ helm -n dev-ns upgrade --install mock-app /charts/mock-app/. --set message="You successfully automatic rollout deployment!"
+$ kubectl get cm -n dev-ns -l app=mock-app -ojsonpath='{.items[0].data}' && printf "\n"
+$ curl -s http://${SERVICE_IP}:${PORT} -w "\n"
+
