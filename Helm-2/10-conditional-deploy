@@ -1,0 +1,14 @@
+1. Add If condition to HPA template:
+# Update hpa.yaml template by adding the condition (Deploy an HPA resource for releases in the prod environment. Do not deploy an HPA resource for releases in any other environment)
+
+# {{- if eq .Values.environment "prod" }} - add at the beginning of the yaml
+# apiVersion: autoscaling/v2
+# kind: HorizontalPodAutoscaler
+# .
+# .
+# .
+# {{- end }} 				  - add at the ending of the file
+
+$ helm -n prod-ns upgrade --install mock-app-prod /charts/mock-app/. --set environment=prod
+$ helm -n dev-ns upgrade --install mock-app-dev /charts/mock-app/. --set environment=dev
+
