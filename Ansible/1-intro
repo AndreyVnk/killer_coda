@@ -1,0 +1,12 @@
+1. Install Ansible:
+$ apt -y install ansible
+
+$ ansible --version	# check version
+
+2. Check modules and syntax:
+$ ansible-doc -l	# list of modules
+
+$ ansible-doc -s setup 	# read the documentation on setup module
+$ ansible-doc -s copy 	# read the documentation on copy module
+
+
