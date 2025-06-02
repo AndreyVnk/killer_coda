@@ -1,0 +1,14 @@
+1. Setup Hosts file:
+cat > /root/hosts << EOF
+[servers]
+controlplane
+node01
+EOF
+
+2. Check functionality and connectivity:
+$ ansible servers -i /root/hosts -m ping	# executing ping module
+
+3. Add to inventory for future environments:
+$ ansible-inventory -i /root/hosts --list	# list output
+$ ansible-inventory -i /root/hosts --graph	# graph output
+$ ansible-inventory -i /root/hosts --list -y	# yaml output
