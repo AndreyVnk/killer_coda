@@ -1,0 +1,10 @@
+1. Ad Hoc to copy and edit:
+$ ansible servers -i /root/hosts -m file -a 'path=/opt/deployment state=directory'		# create a directory on each server
+
+$ ansible servers -i /root/hosts -m copy -a 'src=/root/configfile.cfg dest=/opt/deployment'	# copy over your file to the dir
+
+$ ansible servers -i /root/hosts -m lineinfile -a "path=/opt/deployment/configfile.cfg regexp='^var1' line='var1=111111'" 	# fix a configuration line from 000000 to 111111 
+
+$ ansible servers -i /root/hosts -m shell -a 'cat /opt/deployment/configfile.cfg'		# quick verification
+
+

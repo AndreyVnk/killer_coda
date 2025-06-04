@@ -1,0 +1,10 @@
+1. Ad Hoc to gather data:
+$ ansible servers -i /root/hosts -m shell -a 'uptime'	# check server uptime
+
+$ ansible servers -i /root/hosts -m setup		# setup module gives so much information you can use during playbook execution
+
+$ ansible servers -i /root/hosts -m setup -a 'filter=ansible_distribution'	# check the host distribution information
+
+$ ansible servers -i /root/hosts -m setup -a 'filter=ansible_date_time' 	# check the host time information
+
+
