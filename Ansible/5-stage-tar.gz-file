@@ -1,0 +1,24 @@
+1. Create a playbook to stage an application:
+$ sha1sum /root/deploy.tar.gz							# get sha1 checksum of the archive
+
+# deploy.yaml
+---
+- name: Start of Deployer playbook
+  hosts: servers
+  vars:
+  gather_facts: True
+  become: False
+  tasks:
+
+    - name: Copy deploy.tar.gz over at {{ ansible_date_time.iso8601_basic_short }}
+      copy:
+        src: /root/deploy.tar.gz
+        dest: /opt/deploy.tar.gz
+        checksum: c6cd21b75a4b300b9228498c78afc6e7a831839e
+
+
+$ ansible-playbook -i /root/hosts /root/deploy.yml 				# run Playbook and verify that everything pushed correctly
+
+$ ansible servers -i /root/hosts -m shell -a 'ls -l /opt/deploy.tar.gz'		# manual verify for all
+
+
