@@ -1,0 +1,6 @@
+1. Create a playbook to deploy an application:
+$ ansible-playbook -i /root/hosts /root/6-deploy.yml
+
+$ ansible servers -i /root/hosts -m shell -a 'ls -l /opt/myapp'
+
+
