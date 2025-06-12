@@ -1,0 +1,46 @@
+1. Create a playbook to deploy a jinja2 report:
+
+# template.yaml
+---
+- name: Start of Jinja2 Template Push
+  hosts: servers
+  vars:
+  gather_facts: True
+  become: False
+  tasks:
+
+    - name: Get information for uptime on all systems
+      shell: uptime
+      register: uptime
+
+    - name: Report out to just main server
+      template:
+        src: /root/template.j2
+        dest: "/root/report.{{ansible_date_time.iso8601_basic_short}}.txt"
+      run_once: yes
+      delegate_to: localhost
+
+# template.j2
+This is a system Validation at {{ ansible_date_time.time }} on {{ ansible_date_time.date }}
+
+Unreachable systems:
+----------------------------------------------
+{% for host in ansible_play_hosts_all %}
+{% if host not in ansible_play_hosts %}
+{{ host }}
+{% endif  %}
+{% endfor %}
+
+Hosts who have been up longer than a day:
+----------------------------------------------
+{% for host in ansible_play_hosts_all %}
+{% if hostvars[host].uptime is defined %}
+{% if 'day' in hostvars[host].uptime.stdout %}
+ {{ hostvars[host].ansible_hostname }} - has not rebooted today
+{% endif %}
+{% endif %}
+{% endfor %}
+
+$ ansible-playbook -i /root/hosts /root/template.yml
+
+$ cat /root/report.*.txt	# manual verify
