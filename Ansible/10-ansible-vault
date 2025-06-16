@@ -1,0 +1,31 @@
+1. Playbook execution to see extra-vars:
+$ ansible-playbook variables.yaml --extra-vars "username=scott password=secure"
+
+# variables.yaml
+---
+- name: Variable output testing
+  hosts: localhost
+  vars:
+  gather_facts: True
+  become: False
+  tasks:
+
+    - name: Debug variables to view contents
+      debug:
+        msg: "{{ item }} is in variable list"
+      loop:
+        - "{{ username }}"
+        - "{{ password }}"
+
+2. Create Ansible Vault:
+$ ansible-vault create vault.yaml
+
+$ ansible-vault view vault.yaml							# view the vault with ansible-vault command
+
+3. Run playbook to consume Ansible Vault variables:
+$ ansible-playbook --ask-vault-pass vault_variables.yaml
+
+$ echo <your password> > .passfile
+$ chmod 400 .passfile
+
+$ ansible-playbook --vault-password-file=.passfile vault_variables.yaml 	# run the ansible playbook and consume that password file to decrypt the vault 
