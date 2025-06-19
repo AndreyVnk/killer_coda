@@ -1,0 +1,38 @@
+1. Playbook execution to push MOTD (message of the day) to all servers:
+
+# hosts
+[servers]
+controlplane env=prod
+node01 env=dev
+
+# motd_push.yaml
+---
+- name: MOTD Push
+  hosts: servers
+  vars:
+  gather_facts: True
+  become: True
+  tasks:
+
+  - name: Debug env variables
+    debug:
+      var: env
+
+  - name: Push over the file if prod
+    copy:
+      src: /root/prod_motd
+      dest: "/etc/motd"
+    when: '"prod" in env'
+
+  - name: Push over the file if dev
+    copy:
+      src: /root/dev_motd
+      dest: "/etc/motd"
+    when: '"dev" in env'
+
+# commands
+$ ansible-playbook -i /root/hosts motd_push.yaml
+
+## checks
+$ ansible servers -i /root/hosts -m shell -a 'cat /etc/motd'	# run an adhoc command to check all the MOTD
+$ ssh node01 'cat /etc/motd'					# manually check by logging into node01

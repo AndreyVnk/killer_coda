@@ -1,0 +1,74 @@
+1. Playbook execution to create users:
+
+# hosts
+[servers]
+controlplane env=prod
+node01 env=dev
+
+# user_create.yaml
+---
+- name: User push to environment servers
+  hosts: servers
+  vars:
+  gather_facts: True
+  become: True
+  tasks:
+
+  - name: Debug env variables just to see them
+    debug:
+      var: env
+
+  - name: Create the prod_engineer user
+    user:
+      name: prod_engineer
+      comment: Prod engineer 
+    when: '"prod" in env'
+
+  - name: Create the dev_engineer user and give admin
+    user:
+      name: dev_engineer
+      comment: Dev engineer
+      groups: admin
+    when: '"dev" in env'
+
+# commands
+$ ansible-playbook -i /root/hosts /root/user_create.yaml
+$ ansible servers -i /root/hosts -m shell -a "tail -1 /etc/passwd; grep admin /etc/group"
+
+2. Playbook execution to add keys to users:
+# user_key_add.yaml
+---
+- name: User push to environment servers
+  hosts: servers
+  vars:
+  gather_facts: True
+  become: True
+  tasks:
+
+  - name: Debug env variables just to see them
+    debug:
+      var: env
+
+  - name: Create the prod_engineer user
+    user:
+      name: prod_engineer
+      comment: Prod engineer 
+      generate_ssh_key: yes
+      ssh_key_bits: 2048
+      ssh_key_file: .ssh/id_rsa
+    when: '"prod" in env'
+
+  - name: Create the dev_engineer user and give admin
+    user:
+      name: dev_engineer
+      comment: Dev engineer
+      groups: admin
+      generate_ssh_key: yes
+      ssh_key_bits: 2048
+      ssh_key_file: .ssh/id_rsa
+    when: '"dev" in env'
+ 
+# commands
+$ ansible-playbook -i /root/hosts /root/user_key_add.yaml
+$ ansible servers -i /root/hosts -m shell -a "ls /home/*engineer/.ssh"
+
