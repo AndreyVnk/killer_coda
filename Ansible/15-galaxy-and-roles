@@ -1,0 +1,120 @@
+1. Create and examine roles:
+
+# hosts
+[servers]
+controlplane env=prod app=db
+node01 env=dev app=web
+
+# commands
+$ mkdir -p /root/playbooks/roles && cd /root/playbooks/roles
+
+$ ls -l && tree && ansible-galaxy init update
+$ ls -l && ansible-galaxy init install
+
+# /root/playbooks/roles $ tree
+.
+|-- install
+|   |-- README.md
+|   |-- defaults
+|   |   `-- main.yml
+|   |-- files
+|   |-- handlers
+|   |   `-- main.yml
+|   |-- meta
+|   |   `-- main.yml
+|   |-- tasks
+|   |   `-- main.yml
+|   |-- templates
+|   |-- tests
+|   |   |-- inventory
+|   |   `-- test.yml
+|   `-- vars
+|       `-- main.yml
+`-- update
+    |-- README.md
+    |-- defaults
+    |   `-- main.yml
+    |-- files
+    |-- handlers
+    |   `-- main.yml
+    |-- meta
+    |   `-- main.yml
+    |-- tasks
+    |   `-- main.yml
+    |-- templates
+    |-- tests
+    |   |-- inventory
+    |   `-- test.yml
+    `-- vars
+        `-- main.yml
+
+
+# /root/playbooks/roles/update/tasks/main.yml
+---
+# tasks file for update
+
+- include_tasks: update.yaml
+  tags:
+    - update
+
+# /root/playbooks/roles/update/tasks/update.yaml
+- name: Upgrade all packages to the latest version
+  apt:
+    name: "*"
+    state: latest
+  tags:
+    - update
+
+# /root/playbooks/roles/install/tasks/main.yml
+---
+# tasks file for install
+
+- include_tasks: install.yaml
+  tags:
+    - install
+
+# /root/playbooks/roles/install/tasks/install.yaml
+- name: Debug env variables just to see them
+  debug:
+    var: app
+  tags:
+    - install
+
+- name: Install apache2 on the web server
+  apt:
+    pkg: 
+    - apache2
+    - php
+    state: present
+  when: '"web" in app'
+  tags:
+    - install
+
+- name: Install mariadb on the web server
+  apt:
+    pkg: 
+    - mariadb-server
+    - mariadb-client
+    state: present
+  when: '"db" in app'
+  tags:
+    - install
+
+2. Playbook execution that inherits roles:
+
+# /root/playbooks/environment.yaml
+---
+- hosts: all
+  gather_facts: true
+  vars:
+  tasks:
+
+  roles:
+  - update
+  - install
+
+# commands
+$ ansible-playbook -i /root/hosts /root/playbooks/environment.yaml
+$ ansible-playbook -i /root/hosts /root/playbooks/environment.yaml --tags=update
+$ ansible-playbook -i /root/hosts /root/playbooks/environment.yaml --tags=install
+
