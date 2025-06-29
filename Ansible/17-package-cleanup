@@ -1,0 +1,74 @@
+1. Playbook execution remove security violations:
+
+# hosts
+[servers]
+controlplane
+node01
+
+# remove_packages.j2
+This is a system Validation at {{ ansible_date_time.time }} on {{ ansible_date_time.date }}
+
+Unreachable systems:
+----------------------------------------------
+{% for host in ansible_play_hosts_all %}
+{% if host not in ansible_play_hosts %}
+{{ host }}
+{% endif  %}
+{% endfor %}
+
+Removed packages:
+----------------------------------------------
+{% for host in ansible_play_hosts_all %}
+{% if hostvars[host].verify_apps is defined %}
+{% for package in hostvars[host].verify_apps.results %}
+{% if package.rc == 1 %}
+{{ host }} - Package {{ package.item }} was removed.
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+
+# remove_packages.yaml 
+---
+- name: Package removal for environment
+  hosts: servers
+  vars:
+  gather_facts: True
+  become: True
+  tasks:
+
+  - name: Remove Apps for security reasons
+    apt:
+      pkg: 
+      - containerd
+      - bzip2
+      purge: yes
+      state: absent
+    register: removed_apps
+
+  # - name: Debug Removed Apps
+  #   debug:
+  #     var: removed_apps
+      
+  - name: Verify that the packages were removed
+    shell: "dpkg -l | grep -i {{item}}"
+    loop:
+      - bzip2
+      - containerd
+    failed_when: false
+    register: verify_apps
+
+ # - name: Debug Removed Apps
+ #   debug:
+ #     var: verify_apps
+
+  - name: Report out all removals to just main server
+    template:
+      src: /root/remove_packages.j2
+      dest: "/root/remove_packages_report.{{ansible_date_time.iso8601_basic_short}}.txt"
+    run_once: yes
+    delegate_to: localhost
+
+# commands
+$ ansible-playbook -i /root/hosts /root/remove_packages.yaml
+$ for report in $(ls /root/*report*.txt); do echo "checking $report"; cat $report; done		# verify the output of the reports

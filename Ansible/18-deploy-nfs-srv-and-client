@@ -1,0 +1,88 @@
+1. Playbook execution deploy server:
+
+# hosts
+[servers]
+controlplane type=client
+node01 type=server
+
+$ mkdir -p /root/ansible/roles && cd /root/ansible/roles
+
+# create your ansible galaxy structures
+$ ansible-galaxy init nfs_server
+$ ansible-galaxy init nfs_client
+
+# nfs_deploy.yaml
+- hosts: all
+  gather_facts: true
+  vars:
+  tasks:
+
+  roles:
+  - { role: nfs_server, when: type == "server" }
+  - { role: nfs_client, when: type == "client" }
+
+$ cp nfs_deploy.yaml /root/ansible/nfs_deploy.yaml
+
+# nfs_server_task_main.yaml
+---
+# tasks file for nfs_server
+
+- name: Deploy the NFS server
+  apt:
+    name: "nfs-kernel-server"
+    state: latest
+
+- name: Create share for nfs server
+  file:
+    path: "/share"
+    state: directory
+    owner: nobody
+    group: nogroup
+
+- name: Setup share in /etc/exports
+  lineinfile:
+    path: /etc/exports
+    line: '/share *(rw,sync,no_subtree_check)'
+    create: yes
+  notify:
+    - Restart nfs
+
+# nfs_server_handler_main.yaml
+---
+# handlers file for nfs_server
+
+- name: Restart nfs
+  systemd:
+    state: restarted
+    name: nfs-server
+
+
+# commands
+$ ansible-playbook -i /root/hosts /root/ansible/nfs_deploy.yaml
+$ ssh node01 'hostname; showmount -e'		# check that the server has been started on node01 and a filesystem has been shared out
+
+2. Playbook execution deploy client:
+
+# nfs_client_main.yaml 
+---
+# tasks file for nfs_client
+
+- name: Install the nfs client packages
+  apt:
+    name: nfs-common
+    state: latest
+
+- name: mount the nfs server to local system at /mnt
+  mount:
+    path: /mnt
+    src: 'node01:/share'
+    fstype: nfs
+    state: mounted
+
+$ cp nfs_client_main.yaml /root/ansible/roles/nfs_client/tasks/main.yml
+
+# commands
+$ ansible-playbook -i /root/hosts /root/ansible/nfs_deploy.yaml
+
+$ mount | grep -i nfs | grep -i share		# check that the mount point has been properly mounted on your local system 
+$ cat /etc/fstab

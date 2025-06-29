@@ -1,0 +1,81 @@
+1. Create roles and templates:
+
+# hosts
+[servers]
+controlplane env=prod app=db
+node01 env=dev app=web
+
+$ mkdir -p /root/playbooks/roles && mkdir -p /root/playbooks/reports
+$ cd /root/playbooks/roles 
+
+$ ansible-galaxy init data_gather
+
+# main.yml 
+---
+# tasks file for data_gather
+# What are we doing?
+# Gather a bunch of data about the system and
+# show it via a CSV format
+# Server Name: Facts
+# Server Make: Facts
+# Server Model: Facts
+# Proc Type: Command
+# Socket #: Command
+
+- name: gather processor type
+  shell: "lscpu | grep 'Model name' | cut -d: -f2 | awk -F, '{print $1}' | awk '{$1=$1};1'"
+  register: proc_type
+
+- name: gather socket number
+  shell: "lscpu | grep 'Socket' | cut -d: -f2 | awk '{$1=$1};1'"
+  register: socket
+
+- name: Debug everything
+  debug:
+    var: "{{ item }}"
+    verbosity: 2
+  loop:
+    - ansible_hostname
+    - ansible_system_vendor
+    - ansible_product_name
+    - proc_type.stdout
+    - socket.stdout
+
+
+- name: Deploy the Template
+  template:
+    src: /root/playbooks/roles/data_gather/templates/data_gather.j2
+    dest: /root/playbooks/reports/report.{{ansible_date_time.iso8601_basic_short}}.csv
+  run_once: true
+  delegate_to: localhost
+
+# data_gather.yaml 
+---
+
+- name: Data Gather Playbook
+  hosts: servers
+  vars:
+  gather_facts: True
+  become: True
+  tasks:
+
+  roles:
+  - data_gather
+
+# data_gather.j2   
+Date,Node Name,Server Make,Server Model,Processor Type and Model,Socket #
+{% for host in ansible_play_hosts_all %}
+{% if hostvars[host].socket is defined %}
+{{ansible_date_time.date}} {{ansible_date_time.time}},{{hostvars[host].ansible_hostname}},{{hostvars[host].ansible_system_vendor}},{{hostvars[host].ansible_product_name}},{{hostvars[host].proc_type.stdout}},{{hostvars[host].socket.stdout}}
+{% endif %}
+{% endfor %}
+
+# commands
+$ cp data_gather.yaml /root/playbooks/data_gather.yaml
+$ cp main.yml /root/playbooks/roles/data_gather/tasks/main.yml
+$ cp data_gather.j2 /root/playbooks/roles/data_gather/templates/data_gather.j2
+
+2. Playbook execution that gathers CSV Data
+$ ansible-playbook -i /root/hosts data_gather.yaml		# without debug message
+$ ansible-playbook -vv -i /root/hosts data_gather.yaml		# Verbosity level 2, with debug message
+
