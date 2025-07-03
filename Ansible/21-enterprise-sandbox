@@ -1,0 +1,6 @@
+1. Playbook execution deploy server and client
+
+$ git clone https://github.com/het-tanis/HPC_Deploy.git
+$ cd HPC_Deploy
+$ ansible-playbook -i hosts 01_nfs_system.yaml
+
