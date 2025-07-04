@@ -1,0 +1,13 @@
+1. Setup the environment
+$ git clone https://github.com/het-tanis/HPC_Deploy.git
+$ cd HPC_Deploy
+
+$ ansible-playbook -v -i /root/HPC_Deploy/hosts 03_package_update_or_install.yaml --extra-vars "action=install"
+
+2. Review the playbook for patching everything
+$ cat 04_enterprise_patching.yaml
+
+3. Deploy the patches via the Ansible playbook
+$ ansible-playbook -v -i /root/HPC_Deploy/hosts /root/HPC_Deploy/04_enterprise_patching.yaml
+
+

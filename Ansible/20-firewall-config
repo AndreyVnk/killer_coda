@@ -1,0 +1,97 @@
+1. Create a playbook to push web and database environment. 
+
+# hosts
+cat: cat: No such file or directory
+[servers]
+controlplane env=prod app=db
+node01 env=dev app=web
+
+[webservers]
+node01 env=dev app=web
+
+# packages_install.yaml
+---
+
+- name: Package install for environment
+  hosts: servers
+  vars:
+  gather_facts: True
+  become: True
+  tasks:
+
+  - name: Debug env variables just to see them
+    debug:
+      var: app
+
+  - name: Install apache2 on the web server
+    apt:
+      pkg: 
+      - apache2
+      - php
+      state: present
+    when: '"web" in app'
+
+  - name: Install mariadb on the db server
+    apt:
+      pkg: 
+      - mariadb-server
+      - mariadb-client
+      state: present
+    when: '"db" in app'
+
+$ ansible-playbook -i /root/hosts /root/packages_install.yaml
+
+$ timeout 3 nc -vz node01 80
+$ timeout 3 nc -vz node01 22
+$ timeout 3 nc -vz node01 40200
+$ timeout 3 nc -vz controlplane 3306
+$ timeout 3 nc -vz controlplane 22
+$ timeout 3 nc -vz controlplane 40200
+
+2. Setup the firewall and verify that only enabled ports can be connected to.
+
+# ufw_setup.yaml
+---
+
+#Added for InspectorDiameter to remind everyone to inspect the diameter.
+
+- name: UFW Setup
+  hosts: servers
+  vars:
+  gather_facts: True
+  become: True
+  tasks:
+
+  - name: Debug the app var on each server
+    debug:
+      var: app
+      verbosity: 2
+
+  - name: Enable the UFW firewall
+    ufw:
+      state: enabled
+      policy: deny
+
+  - name: Allow Port 22 (SSH)
+    ufw:
+      rule: allow
+      name: OpenSSH
+  
+  - name: Allow Port 80, if web server
+    ufw:
+      rule: allow
+      name: Apache
+    when: "'web' in app" 
+
+  - name: Allow Port 3306, if db server
+    ufw:
+      rule: allow
+      port: '3306'
+      proto: tcp
+    when: "'db' in app"
+
+$ ansible-playbook -i /root/hosts /root/ufw_setup.yaml
+
+$ ufw status &&  ssh node01 'ufw status'		# check ufw status on different nodes
+
+
