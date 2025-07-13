@@ -1,0 +1,40 @@
+1. Create Services for existing Deployments
+$ k -n world expose deploy europe --port 80
+$ k -n world expose deploy asia --port 80
+
+2. Create Ingress for existing Services
+$ k -n ingress-nginx get svc ingress-nginx-controller		# Check the NodePort Service for the Nginx Ingress Controller to see the ports
+
+$ curl http://172.30.1.2:30080 					# We can reach the NodePort Service via the K8s Node IP
+
+# ingress.yaml
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: world
+  namespace: world
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "world.universe.mine"
+    http:
+      paths:
+      - path: /europe
+        pathType: Prefix
+        backend:
+          service:
+            name: europe
+            port:
+              number: 80
+      - path: /asia
+        pathType: Prefix
+        backend:
+          service:
+            name: asia
+            port:
+              number: 80
+
+
+$ k -n world apply -f ingress.yaml 
+
