@@ -1,0 +1,49 @@
+1. Secure an Ingress with a TLS certificate
+
+# First we generate the crt and key:
+$ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout cert.key -out cert.crt -subj "/CN=world.universe.mine/O=world.universe.mine"
+
+# Create a Secret from the generated files:
+$ kubectl -n world create secret tls ingress-tls --key cert.key --cert cert.crt
+
+# Make the Ingress use it:
+$ k -n world edit ing world
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: world
+  namespace: world
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  ingressClassName: nginx
+  tls:                            # add
+  - hosts:                        # add
+    - world.universe.mine         # add
+    secretName: ingress-tls       # add
+  rules:
+  - host: "world.universe.mine"
+    http:
+      paths:
+      - path: /europe
+        pathType: Prefix
+        backend:
+          service:
+            name: europe
+            port:
+              number: 80
+      - path: /asia
+        pathType: Prefix
+        backend:
+          service:
+            name: asia
+            port:
+              number: 80
+
+# Verify:
+$ curl -m1 -kvI https://world.universe.mine:30443/europe 2>&1 | grep subject | grep world.universe.mine
+
+
