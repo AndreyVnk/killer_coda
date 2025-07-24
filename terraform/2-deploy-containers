@@ -1,0 +1,110 @@
+1. Setting up Terraform
+
+# Check that containerd is running and exposed on your system:
+$ systemctl status containerd --no-pager
+$ ss -ntulp | grep -i containerd
+
+# Check that terraform is installed:
+$ which terraform
+$ terraform version
+
+# Let's make a directory for this project:
+$ mkdir /root/learn-terraform-docker-container
+$ cd /root/learn-terraform-docker-container/
+
+2. Creating our first Deployment
+
+# main.tf
+terraform {
+  required_providers {
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "~> 2.13.0"
+    }
+  }
+}
+
+provider "docker" {}
+
+resource "docker_image" "nginx" {
+  name         = "nginx:latest"
+  keep_locally = false
+}
+
+resource "docker_container" "nginx" {
+  image = docker_image.nginx.latest
+  name  = "tutorial"
+  ports {
+    internal = 80
+    external = 8000
+  }
+}
+
+# Let's make sure our Terraform configuration is well formatted and validated:
+$ terraform fmt
+$ terraform validate
+
+# Deploy our resources
+$ terraform apply --auto-approve
+
+# Let's verify that we have a working container
+$ docker images
+$ docker ps
+$ curl 127.0.0.1:8000
+
+3. Extending the Deployment
+
+# Let's start by destroying our old Terraform configuration:
+$ terraform destroy --auto-approve
+
+# main.tf
+terraform {
+  required_providers {
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "~> 2.13.0"
+    }
+  }
+}
+
+provider "docker" {}
+
+resource "docker_image" "nginx" {
+  name         = "nginx:latest"
+  keep_locally = false
+}
+
+resource "docker_container" "nginx8080" {
+  image = docker_image.nginx.latest
+  name  = "nginx8080"
+  ports {
+    internal = 80
+    external = 8080
+  }
+}
+
+resource "docker_container" "nginx8081" {
+  image = docker_image.nginx.latest
+  name  = "nginx8081"
+  ports {
+    internal = 80
+    external = 8081
+  }
+}
+
+resource "docker_container" "nginx8082" {
+  image = docker_image.nginx.latest
+  name  = "nginx8082"
+  ports {
+    internal = 80
+    external = 8082
+  }
+}
+
+# Make sure our Terraform configuration is well formatted and validated:
+$ terraform fmt
+$ terraform validate
+
+# Let's deploy our resources:
+$ terraform apply --auto-approve
+
