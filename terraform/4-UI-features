@@ -1,0 +1,49 @@
+1. Start Vault with UI
+
+# Start the Vault server with the UI enabled:
+$ mkdir -p /opt/vault/data
+$ cd /opt/vault
+
+# Create a config file for vault that starts it and lets the server know where to store the raft data:
+tee config.hcl <<EOF
+ui = true
+disable_mlock = true
+
+storage "raft" {
+  path    = "/opt/vault/data"
+  node_id = "node1"
+}
+
+listener "tcp" {
+  address     = "0.0.0.0:8200"
+  tls_disable = "true"
+}
+
+api_addr = "http://127.0.0.1:8200"
+cluster_addr = "https://127.0.0.1:8201"
+EOF
+
+
+# Verify everything looks correct:
+$ cat /opt/vault/config.hcl
+
+# Start the server with the config file:
+$ vault server -config=config.hcl &
+
+# Verify that the server is listening on the proper ports:
+$ lsof -i :8200
+$ ss -ntulp | grep 820
+
+# Connect to the port and verify that the server is running
+
+2. Using UI Mode to navigate Vault
+
+# In your UI choose to "Create a new Raft Cluster"
+# Enter 5 in Key shares and 3 in Key thresholds
+# Click Initialize
+
+# You will see the unseal keys and must select to download them. They will become a .json doc in your downloads folder. It should look like this
+# You will unseal the vault using 3 of the 5 keys. (Any 3 will do). Repeat this step 3 times.
+
+# Next, you must present the root token from your downloaded file.
+# Once you hit "Sign In" you will be presented with the WEB UI Wizard.
